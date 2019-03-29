@@ -1,0 +1,5 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.name2gender.MyComponent"
+

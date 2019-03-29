@@ -1,0 +1,10 @@
+language: "zh"
+pipeline:
+  - name: "nlp_mitie"
+    model: "/Users/zhangzhen/data/MITIE-models/total_word_feature_extractor_zh.dat"  // 加载 mitie 模型
+  - name: "tokenizer_jieba"  // 使用 jieba 进行分词
+  - name: "ner_mitie"  // mitie 的命名实体识别
+  - name: "ner_synonyms"
+  - name: "intent_entity_featurizer_regex"
+  - name: "intent_featurizer_mitie"  // 特征提取
+  - name: "intent_classifier_sklearn" // sklearn 的意图分类模型
