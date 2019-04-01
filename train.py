@@ -23,21 +23,21 @@ def create_argument_parser():
 
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument('-d', '--data',
+    group.add_argument('-d', '--via',
                        default=None,
-                       help="Location of the training data. For JSON and "
-                            "markdown data, this can either be a single file "
+                       help="Location of the training via. For JSON and "
+                            "markdown via, this can either be a single file "
                             "or a directory containing multiple training "
-                            "data files.")
+                            "via files.")
 
     group.add_argument('-u', '--url',
                        default=None,
-                       help="URL from which to retrieve training data.")
+                       help="URL from which to retrieve training via.")
 
     group.add_argument('--endpoints',
                        default=None,
                        help="EndpointConfig defining the server from which "
-                            "pull training data.")
+                            "pull training via.")
 
     parser.add_argument('-c', '--config',
                         required=True,
@@ -103,7 +103,7 @@ def do_train_in_worker(cfg: RasaNLUModelConfig,
                        component_builder: Optional[ComponentBuilder] = None
 
                        ):
-    """Loads the trainer and the data and runs the training in a worker."""
+    """Loads the trainer and the via and runs the training in a worker."""
 
     try:
         _, _, persisted_path = train(cfg, data, path, project,
@@ -125,7 +125,7 @@ def train(nlu_config: Union[Text, RasaNLUModelConfig],
           training_data_endpoint: Optional[EndpointConfig] = None,
           **kwargs: Any
           ) -> Tuple[Trainer, Interpreter, Text]:
-    """Loads the trainer and the data and runs the training of the model."""
+    """Loads the trainer and the via and runs the training of the model."""
 
     if isinstance(nlu_config, str):
         nlu_config = config.load(nlu_config)

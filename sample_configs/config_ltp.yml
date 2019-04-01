@@ -1,0 +1,6 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.nlu.utils.ltp.LtpHelper"
+    path: "/Users/zhangzhen/data/ltp_data_v3.4.0"
+    lexicon: "lexicon"

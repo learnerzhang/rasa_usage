@@ -208,7 +208,7 @@ class RasaNLU(object):
 
     def extract_json(self, content):
         # test if json has config structure
-        json_config = simplejson.loads(content).get("data")
+        json_config = simplejson.loads(content).get("via")
 
         # if it does then this results in correct format.
         if json_config:
@@ -230,11 +230,11 @@ class RasaNLU(object):
         content_type = self.get_request_content_type(request)
 
         if 'yml' in content_type:
-            # assumes the user submitted a model configuration with a data
+            # assumes the user submitted a model configuration with a via
             # parameter attached to it
 
             model_config = utils.read_yaml(request_content)
-            data = model_config.get("data")
+            data = model_config.get("via")
 
         elif 'json' in content_type:
 
