@@ -1,12 +1,12 @@
 language: "zh"
 
 pipeline:
-  - name: "litemind.nlu.utils.n2g.N2GHelper"
-    data_path: "data/n2g/name.dat"
+  - name: "litemind.nlu.utils.n2g.torch_n2g.N2GHelper"
+    data_path: "data/n2g/name_dev.dat"
     label2int: {'男': 1, '女': 0}
-    max_length: 8
+    max_length: 2
     embed_size: 256
-    epoch: 1
+    epoch: 10
     batch_size: 256
 
 

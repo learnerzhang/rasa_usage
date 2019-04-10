@@ -1,0 +1,18 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.nlu.utils.ltp.LtpHelper"
+    path: "/home/grafa/zhangzhen/data/ltp_data_v3.4.0"
+    lexicon: "lexicon"
+  - name: "litemind.nlu.utils.pronoun.PronounHelper"
+  - name: "litemind.nlu.utils.n2g.easy_n2g.N2GHelper"
+    data_path: "data/n2g/name.dat"
+    label2int: {'男': 1, '女': 0}
+    max_length: 8
+    embed_size: 300
+    epoch: 20
+    batch_size: 256
+  - name: "litemind.coref.stg.Strategy"
+    w2v_path: "/home/grafa/zhangzhen/data/emb_ch/embedding.50.cformat"
+
+

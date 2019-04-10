@@ -84,7 +84,7 @@ class LtpHelper(Component):
         self.labeller.load(os.path.join(MODELDIR, "pisrl.model"))
 
     def extract_tokens(self, message: Message):
-        message.set("tokens", list(self.segmentor.segment(message.text)))
+        message.set("tokens", list(self.segmentor.segment(message.text)), add_to_output=True)
 
     def extract_poses(self, message: Message):
         if message.get("tokens", default=None):
@@ -161,7 +161,7 @@ class LtpHelper(Component):
             else:  # O
                 pass
             i += 1
-        message.set("entities", entites)
+        message.set("entities", entites, add_to_output=True)
 
     def process(self, message: Message, **kwargs: Any):
         """Process an incoming message.

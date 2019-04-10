@@ -148,7 +148,8 @@ class Strategy(Component):
                 entities = [e for e in entities if e['dim'] != 'Nh']
             else:
                 # 人实体指代: 他/她
-                entities = [e for e in entities if e['dim'] == 'Nh' and e['gender'] == pronoun['gender']]
+                entities = [e for e in entities if
+                            e['dim'] == 'Nh' and (e['gender'] == pronoun['gender'] or e['gender'] == '未')]
 
             # step2 多个实体, 需要考虑就进原则, 支配词
             return self.multi_sample_class_entities(pronoun, entities, message)
@@ -162,15 +163,15 @@ class Strategy(Component):
 
     def process(self, message: Message, **kwargs: Any):
 
-        pairs = []
+        mentions = []
 
         for pronoun in message.get("pronouns", []):
             ent = self.stag(pronoun, message)
             if ent:
-                pairs.append({"pronoun": pronoun, "entity": ent})
-        message.set("pairs", pairs)
-        import pprint
-        pprint.pprint(message.data)
+                mentions.append({"pronoun": pronoun, "entity": ent})
+        message.set("mentions", mentions, add_to_output=True)
+        logging.info("coref data: {}".format(message.data))
+
     @classmethod
     def load(cls,
              meta: Dict[Text, Any],

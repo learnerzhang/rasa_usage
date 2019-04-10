@@ -3,11 +3,10 @@
 # @Time    : 2019-03-29 16:05
 # @Author  : zhangzhen
 # @Site    : 
-# @File    : n2g.py
+# @File    : torch_n2g.py
 # @Software: PyCharm
 import codecs
 import collections
-import random
 
 import numpy as np
 from typing import Text, Dict
@@ -59,6 +58,3 @@ def get_n2g(filepath, label2int, max_length):
     labels = [label2int[label] for label in labels]
 
     return np.array(dat), np.array(labels), vocabulary2int
-
-
-

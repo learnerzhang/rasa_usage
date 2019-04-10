@@ -147,5 +147,5 @@ class PronounHelper(Component):
                     'gender': self.pronouns2gender(w),  # gender
                     'singular': self.isSingular(w),  # singular and the plural
                 })
-        message.set("pronouns", pronouns)
+        message.set("pronouns", pronouns, add_to_output=True)
 

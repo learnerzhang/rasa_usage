@@ -80,7 +80,7 @@ class N2GHelper(Component):
     # pipeline. E.g. ``[ComponentA, ComponentB]``
     # will be a proper pipeline definition where ``ComponentA``
     # is the name of the first component of the pipeline.
-    name = "n2g"
+    name = "torch_n2g"
     # Defines what attributes the pipeline component will
     # provide when called. The listed attributes
     # should be set by the component on the message object
@@ -138,9 +138,13 @@ class N2GHelper(Component):
         on any context attributes created by a call to
         :meth:`components.Component.train`
         of components previous to this one."""
+        logging.info("n2g:", self.n2g)
+        print(self.n2g)
+        # X_train, X_test, y_train, y_test = train_test_split(self.dat, self.tags, test_size=0.333, random_state=2333)
+        X_train, y_train = self.dat, self.tags
+        X_test, y_test = self.dat, self.tags
 
-        X_train, X_test, y_train, y_test = train_test_split(self.dat, self.tags, test_size=0.333, random_state=1234)
-        optimizer = torch.optim.Adam(self.n2g.parameters(), lr=0.001)
+        optimizer = torch.optim.Adam(self.n2g.parameters(), lr=0.0001)
         loss_func = nn.CrossEntropyLoss()
 
         for e in range(self.epoch):

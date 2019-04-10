@@ -1,0 +1,5 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.nlu.utils.n2g.easy_n2g.N2GHelper"
+    data_path: "data/n2g/name_dev.dat"
