@@ -9,6 +9,4 @@ pipeline:
     epoch: 10
     batch_size: 256
 
-
-
-
+adapter: 'coref'

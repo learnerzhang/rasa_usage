@@ -9,3 +9,5 @@ pipeline:
     data_path: "data/n2g/name_dev.dat"
   - name: "litemind.coref.stg.Strategy"
     w2v_path: "/Users/zhangzhen/data/emb_ch/embedding.50.cformat"
+
+adapter: 'coref'

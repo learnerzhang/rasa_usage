@@ -5,10 +5,11 @@ from typing import Any, Optional, Text, Tuple, Union
 from rasa.nlu import config, utils
 from rasa.nlu.components import ComponentBuilder
 from rasa.nlu.config import RasaNLUModelConfig
-from rasa.nlu.model import Interpreter, Trainer
 from rasa.nlu.training_data import load_data
 from rasa.nlu.training_data.loading import load_data_from_endpoint
 from rasa.nlu.utils import EndpointConfig, read_endpoints
+
+from litemind.nlu.model import Trainer, Interpreter
 
 logger = logging.getLogger(__name__)
 

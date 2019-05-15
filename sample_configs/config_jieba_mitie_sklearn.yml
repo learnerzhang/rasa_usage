@@ -8,3 +8,5 @@ pipeline:
   - name: "intent_entity_featurizer_regex"
   - name: "intent_featurizer_mitie"  // 特征提取
   - name: "intent_classifier_sklearn" // sklearn 的意图分类模型
+
+adapter: 'rasa'

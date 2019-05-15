@@ -23,9 +23,9 @@ from rasa.nlu.config import RasaNLUModelConfig
 from rasa.nlu.emulators import NoEmulator
 from rasa.nlu.test import run_evaluation
 from rasa.nlu.model import InvalidProjectError
-from rasa.nlu.project import (
-    Project, STATUS_FAILED, STATUS_READY, STATUS_TRAINING, load_from_server)
 from rasa.nlu.train import do_train_in_worker
+
+from litemind.nlu.project import load_from_server, Project, STATUS_TRAINING, STATUS_READY, STATUS_FAILED
 
 logger = logging.getLogger(__name__)
 
@@ -237,6 +237,9 @@ class DataRouter(object):
         elif mode.lower() == 'lite':
             from litemind.nlu.emulators.lite import LiteEmulator
             return LiteEmulator()
+        elif mode.lower() == 'coref':
+            from litemind.nlu.emulators.coref import CorefEmulator
+            return CorefEmulator()
         else:
             raise ValueError("unknown mode : {0}".format(mode))
 
@@ -289,7 +292,7 @@ class DataRouter(object):
                 for fn in utils.list_subdirectories(path)]
 
     def format_response(self, data: Dict[Text, Any]) -> Dict[Text, Any]:
-        return self.emulator.normalise_response_json(data)
+        return self._create_emulator(data['adapter']).normalise_response_json(data)
 
     def get_status(self) -> Dict[Text, Any]:
         # This will only count the trainings started from this

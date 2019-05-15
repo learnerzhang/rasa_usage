@@ -17,13 +17,7 @@ class LiteEmulator(NoEmulator):
     def normalise_request_json(self, data: Dict[Text, Any]) -> Dict[Text, Any]:
 
         _data = {}
-
-        if 'q' in data:
-            # nlu解析功能
-            _data["text"] = data["q"][0] if type(data["q"]) == list else data["q"]
-        elif 'd' in data:
-            # 话单服务功能
-            _data['text'] = data['d']
+        _data["text"] = data["q"][0] if type(data["q"]) == list else data["q"]
 
         if not data.get("project"):
             _data["project"] = "default"
