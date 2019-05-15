@@ -20,7 +20,7 @@ from rasa.nlu.training_data import Message, TrainingData
 from gensim import models, utils
 import numpy as np
 
-from litemind.nlu.utils import pronouns2gender
+from litemind.nlu.utils import pronouns2gender, span_output_format
 
 logger = logging.getLogger(__name__)
 
@@ -192,6 +192,7 @@ class Strategy(Component):
                         "pronoun": {'start': pronoun['start'], 'end': pronoun['end']},
                         "entity": {'start': ent['start'], 'end': ent['end']}
                     })
+        span_output_format(spans)
         message.set("coreferences", coreferences, add_to_output=True)
         logging.info("coref data: {}".format(message.data))
 

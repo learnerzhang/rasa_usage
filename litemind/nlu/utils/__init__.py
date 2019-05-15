@@ -8,7 +8,7 @@
 """
     工具: 词性、句法分析
 """
-from typing import Text, Any, List
+from typing import Text, Any, List, Dict
 
 
 def get_start(idx: int, tokens: List):
@@ -74,3 +74,14 @@ def pronouns2gender(pronouns: Text):
             return key
     else:
         return "中"
+
+
+def span_output_format(spans: List[Dict]):
+    """
+    移除不必要的属性
+    :param spans:
+    :return:
+    """
+    for span in spans:
+        if 'gender' in span:
+            del span['gender']
