@@ -23,7 +23,7 @@ def create_argument_parser():
 
     group = parser.add_mutually_exclusive_group(required=True)
 
-    group.add_argument('-d', '--via',
+    group.add_argument('-d', '--data',
                        default=None,
                        help="Location of the training via. For JSON and "
                             "markdown via, this can either be a single file "

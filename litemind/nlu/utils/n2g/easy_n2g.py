@@ -31,34 +31,10 @@ logger = logging.getLogger(__name__)
 class N2GHelper(Component):
     """A new component for n2g"""
 
-    # Name of the component to be used when integrating it in a
-    # pipeline. E.g. ``[ComponentA, ComponentB]``
-    # will be a proper pipeline definition where ``ComponentA``
-    # is the name of the first component of the pipeline.
     name = "easy_n2g"
-    # Defines what attributes the pipeline component will
-    # provide when called. The listed attributes
-    # should be set by the component on the message object
-    # during test and train, e.g.
-    # ```message.set("entities", [...])```
     provides = []
-
-    # Which attributes on a message are required by this
-    # component. e.g. if requires contains "tokens", than a
-    # previous component in the pipeline needs to have "tokens"
-    # within the above described `provides` property.
     requires = []
-
-    # Defines the default configuration parameters of a component
-    # these values can be overwritten in the pipeline configuration
-    # of the model. The component should choose sensible defaults
-    # and should be able to create reasonable results with the defaults.
     defaults = {}
-
-    # Defines what language(s) this component can handle.
-    # This attribute is designed for instance method: `can_handle_language`.
-    # Default value is None which means it can handle all languages.
-    # This is an important feature for backwards compatibility of components.
     language_list = None
 
     def __init__(self,
@@ -136,13 +112,16 @@ class N2GHelper(Component):
             2. 判读实体性别
             男: 1, 女: 0, 都可能: -1
         """
-        entities = message.get("entities", [])
+        entities = message.get("spans", [])
         for ent in entities:
             # TODO 需要优化, 根据新增实体规则, 相应扩展
-            if ent['dim'] == 'Nh':
-                """如果是人实体, 则..."""
-                if len(ent['value']) > 1:
-                    name = " " + ent['value'] if len(ent['value']) == 1 else ent['value']
+            if ent['label'] == 'PER':
+                # 处理去掉姓氏后的名称
+                per_text = message.text[ent['start'] + 1: ent['end']]
+                per_len = len(per_text)
+
+                if per_len >= 1:
+                    name = " " + per_text if per_len == 1 else per_text
                     w1, w2 = name[0], name[1]
                     p1 = self.m_word_count[w1] / (self.m_word_count[w1] + self.f_word_count[w1])
                     p2 = self.m_word_count[w2] / (self.m_word_count[w2] + self.f_word_count[w2])

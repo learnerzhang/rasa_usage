@@ -104,3 +104,5 @@ ENV/
 *.tar
 
 .idea
+
+models/

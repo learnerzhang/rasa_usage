@@ -1,1 +1,4 @@
-rasa==0.1.1
+rasa==0.15.0a5
+pandas==0.23.4
+numpy==1.13.3
+python-Levenshtein-0.12.0

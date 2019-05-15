@@ -1,0 +1,4 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.call2graph.parse.c2g.CallParse"

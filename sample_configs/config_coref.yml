@@ -4,7 +4,7 @@ pipeline:
   - name: "litemind.nlu.utils.ltp.LtpHelper"
     path: "/Users/zhangzhen/data/ltp_data_v3.4.0"
     lexicon: "lexicon"
-  - name: "litemind.nlu.utils.pronoun.PronounHelper"
+    dimension: {'Nh':'PER', 'Ni':'ORG', 'Ns':'LOC'}
   - name: "litemind.nlu.utils.n2g.easy_n2g.N2GHelper"
     data_path: "data/n2g/name_dev.dat"
   - name: "litemind.coref.stg.Strategy"

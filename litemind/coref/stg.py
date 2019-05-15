@@ -20,6 +20,8 @@ from rasa.nlu.training_data import Message, TrainingData
 from gensim import models, utils
 import numpy as np
 
+from litemind.nlu.utils import pronouns2gender
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,6 +68,18 @@ class Strategy(Component):
               **kwargs: Any) -> None:
         pass
 
+    def start(self, ent, tokens):
+        for idx, token in enumerate(tokens):
+            if ent['start'] == token['start']:
+                return idx
+        return -1
+
+    def end(self, ent, tokens):
+        for idx, token in enumerate(tokens):
+            if ent['end'] == token['end']:
+                return idx + 1
+        return -1
+
     def multi_sample_class_entities(self, pronoun: Dict, entities: List[Dict], message: Message):
         """
         指代词在同类实体, 采用代词和实体支配词的相似度计算, 当大于0.5 阈值则关联,
@@ -75,7 +89,7 @@ class Strategy(Component):
         :param message:
         :return:
         """
-        tokens, arcs = message.get("tokens"), message.get("arcs")
+        tokens, segments, arcs = message.get("tokens"), message.get("segments"), message.get("arcs")
 
         if len(entities) == 0:
             return None
@@ -94,20 +108,21 @@ class Strategy(Component):
             else:
                 ctx_pronoun = message.text[pronoun_end:pronoun_end + 1]
 
-            pronoun_arc = arcs[pronoun.get("token_start")]
-            pronoun_dep_words = tokens[pronoun_arc.head - 1]
+            # TODO
+            pronoun_arc = arcs[self.start(pronoun, tokens)]
+            pronoun_dep_words = segments[pronoun_arc.head - 1]
             arc_sims = []
             ctx_sims = []
             for ent in entities:
                 # context similarity
                 # TODO  next context of ent
-                ctx_ent = tokens[ent['token_end']]
+                ctx_ent = segments[self.end(ent, tokens)]
                 ctx_sim = self.similarity(ctx_pronoun, ctx_ent)
                 ctx_sims.append(ctx_sim)
 
-                # arcs similarity
-                arc = arcs[ent.get("token_start")]
-                ent_dep_words = tokens[arc.head - 1]
+                # TODO arcs similarity
+                arc = arcs[self.start(ent, tokens)]
+                ent_dep_words = segments[arc.head - 1]
                 arc_sim = self.similarity(pronoun_dep_words, ent_dep_words)
                 arc_sims.append(arc_sim)
 
@@ -137,19 +152,22 @@ class Strategy(Component):
         :param message:
         :return:
         """
+        p_text = message.text[pronoun['start']: pronoun['end']]
+        spans = message.get("spans", [])
+
         # step1 解决前指现象
-        entities = message.get("entities", [])
+        entities = [span for span in spans if span['label'] != 'Pronoun']
         entities = [e for e in entities if e['end'] <= pronoun['start']]
 
         if len(entities) > 0:
             # step2 性别, 单复数现象
-            if pronoun['gender'] == -1:
+            if pronouns2gender(p_text) == '它':
                 # 非人类指代: 它
-                entities = [e for e in entities if e['dim'] != 'Nh']
+                entities = [e for e in entities if e['label'] != 'PER']
             else:
                 # 人实体指代: 他/她
                 entities = [e for e in entities if
-                            e['dim'] == 'Nh' and (e['gender'] == pronoun['gender'] or e['gender'] == '未')]
+                            e['label'] == 'PER' and (e['gender'] == pronouns2gender(p_text) or e['gender'] == '未')]
 
             # step2 多个实体, 需要考虑就进原则, 支配词
             return self.multi_sample_class_entities(pronoun, entities, message)
@@ -163,13 +181,18 @@ class Strategy(Component):
 
     def process(self, message: Message, **kwargs: Any):
 
-        mentions = []
-
-        for pronoun in message.get("pronouns", []):
+        spans = message.get("spans", [])
+        pronouns = [span for span in spans if span['label'] == 'Pronoun']
+        coreferences = []
+        for pronoun in pronouns:
             ent = self.stag(pronoun, message)
             if ent:
-                mentions.append({"pronoun": pronoun, "entity": ent})
-        message.set("mentions", mentions, add_to_output=True)
+                coreferences.append(
+                    {
+                        "pronoun": {'start': pronoun['start'], 'end': pronoun['end']},
+                        "entity": {'start': ent['start'], 'end': ent['end']}
+                    })
+        message.set("coreferences", coreferences, add_to_output=True)
         logging.info("coref data: {}".format(message.data))
 
     @classmethod

@@ -11,13 +11,13 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 
 import rasa
 from rasa.nlu import config, utils
-import rasa.nlu.cli.server as cli
 from rasa.nlu.config import RasaNLUModelConfig
-from rasa.nlu.data_router import (
-    DataRouter, InvalidProjectError, MaxTrainingError)
 from rasa.constants import MINIMUM_COMPATIBLE_VERSION
 from rasa.nlu.train import TrainingException
 from rasa.nlu.utils import json_to_string, read_endpoints
+
+from litemind.nlu.data_router import (DataRouter, InvalidProjectError, MaxTrainingError)
+import litemind.nlu.cli.server as cli
 
 logger = logging.getLogger(__name__)
 
@@ -178,6 +178,53 @@ class RasaNLU(object):
                 response = yield (self.data_router.parse(data) if self._testing
                                   else threads.deferToThread(
                     self.data_router.parse, data))
+                returnValue(json_to_string(response))
+            except InvalidProjectError as e:
+                request.setResponseCode(404)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+            except Exception as e:
+                request.setResponseCode(500)
+                logger.exception(e)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+
+    @app.route("/call2graph", methods=['GET', 'POST', 'OPTIONS'])
+    @requires_auth
+    @check_cors
+    @inlineCallbacks
+    def call2graph(self, request):
+        request.setHeader('Content-Type', 'application/json')
+        if request.method.decode('utf-8', 'strict') == 'GET':
+            request_params = decode_parameters(request)
+        else:
+            request_params = simplejson.loads(
+                request.content.read().decode('utf-8', 'strict'))
+
+        if 'data' in request_params:
+            request_params['d'] = request_params.pop('data')
+
+        if 'filename' in request_params:
+            request_params['f'] = request_params.pop('filename')
+
+        if 'd' not in request_params and 'f' not in request_params:
+            request.setResponseCode(404)
+            dumped = json_to_string(
+                {"error": "Invalid parse parameter specified"})
+            returnValue(dumped)
+        else:
+            # TODO 提取文件名中的手机号
+
+            # 封装解析参数
+            data = self.data_router.extract(request_params)
+
+            try:
+                request.setResponseCode(200)
+                # 解析Array内容
+                response = yield (self.data_router.parse(data) if self._testing
+                                  else threads.deferToThread(
+                    self.data_router.parse, data))
+
+                print("-->", response)
+                # TODO 校验文档有效性
                 returnValue(json_to_string(response))
             except InvalidProjectError as e:
                 request.setResponseCode(404)

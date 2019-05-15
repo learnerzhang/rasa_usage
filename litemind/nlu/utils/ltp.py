@@ -22,49 +22,28 @@ from rasa.nlu.training_data import Message, TrainingData
 
 from pyltp import Segmentor, Postagger, Parser, NamedEntityRecognizer, SentenceSplitter, SementicRoleLabeller
 
-from litemind.nlu.utils import get_start
+from litemind.nlu.utils import get_start, legalPronouns, pronouns2gender
 
 logger = logging.getLogger(__name__)
 
 
 class LtpHelper(Component):
     """A new component"""
-
-    # Name of the component to be used when integrating it in a
-    # pipeline. E.g. ``[ComponentA, ComponentB]``
-    # will be a proper pipeline definition where ``ComponentA``
-    # is the name of the first component of the pipeline.
     name = "ltp"
 
-    # Defines what attributes the pipeline component will
-    # provide when called. The listed attributes
-    # should be set by the component on the message object
-    # during test and train, e.g.
-    # ```message.set("entities", [...])```
     provides = []
 
-    # Which attributes on a message are required by this
-    # component. e.g. if requires contains "tokens", than a
-    # previous component in the pipeline needs to have "tokens"
-    # within the above described `provides` property.
     requires = []
 
-    # Defines the default configuration parameters of a component
-    # these values can be overwritten in the pipeline configuration
-    # of the model. The component should choose sensible defaults
-    # and should be able to create reasonable results with the defaults.
     defaults = {}
 
-    # Defines what language(s) this component can handle.
-    # This attribute is designed for instance method: `can_handle_language`.
-    # Default value is None which means it can handle all languages.
-    # This is an important feature for backwards compatibility of components.
     language_list = None
 
     def __init__(self, component_config: Dict[Text, Any] = None):
         super(LtpHelper, self).__init__(component_config)
         self.path = component_config['path']
         self.lexicon = component_config['lexicon']
+        self.dimension = component_config['dimension']
 
         ROOTDIR = os.path.join(os.path.dirname(__file__), os.pardir)
         MODELDIR = os.path.join(ROOTDIR, self.path)
@@ -84,13 +63,22 @@ class LtpHelper(Component):
         self.labeller.load(os.path.join(MODELDIR, "pisrl.model"))
 
     def extract_tokens(self, message: Message):
-        message.set("tokens", list(self.segmentor.segment(message.text)), add_to_output=True)
+        segments = list(self.segmentor.segment(message.text))
+        tokens = []
+        start = 0
+        for idx, segment in enumerate(segments):
+            end = start + len(segment)
+            tokens.append({'start': start, 'end': end})
+            start = end
+
+        message.set("segments", segments)
+        message.set("tokens", tokens, add_to_output=True)
 
     def extract_poses(self, message: Message):
-        if message.get("tokens", default=None):
+        if not message.get("segments", default=None):
             self.extract_tokens(message)
 
-        message.set("poses", list(self.postagger.postag(message.get("tokens"))))
+        message.set("poses", list(self.postagger.postag(message.get("segments"))))
 
     def extract_tagseq(self, message: Message):
         """
@@ -98,13 +86,13 @@ class LtpHelper(Component):
         :param message:
         :return:
         """
-        message.set("tagseq", list(self.recognizer.recognize(message.get("tokens"), message.get("poses"))))
+        message.set("tagseq", list(self.recognizer.recognize(message.get("segments"), message.get("poses"))))
 
     def extract_parses(self, message: Message):
-        message.set("arcs", self.parser.parse(message.get("tokens"), message.get("poses")))
+        message.set("arcs", self.parser.parse(message.get("segments"), message.get("poses")))
 
     def extract_labels(self, message: Message):
-        message.set("labels", self.labeller.label(message.get("tokens"), message.get("poses"), message.get("arcs")))
+        message.set("labels", self.labeller.label(message.get("segments"), message.get("poses"), message.get("arcs")))
 
     def train(self, training_data: TrainingData,
               config: RasaNLUModelConfig,
@@ -119,9 +107,9 @@ class LtpHelper(Component):
         self.extract_tagseq(message)
 
         # step2.
-        tokens, labels = message.get("tokens"), message.get("tagseq")
+        tokens, labels = message.get("segments"), message.get("tagseq")
         i, start, end = 0, 0, 0
-        entites = []
+        spans = []
         while i < len(labels):
             if labels[i].startswith('E'):
                 dim = labels[i].split('-')[1]
@@ -132,14 +120,11 @@ class LtpHelper(Component):
                 # 句子结束
                 _end = get_start(i, tokens=tokens) + len(value)
                 ent = {
-                    'dim': dim,
+                    'label': self.dimension[dim],
                     'start': _start,
-                    'token_start': start,
                     'end': _end,
-                    'token_end': i + 1,
-                    'value': value
                 }
-                entites.append(ent)
+                spans.append(ent)
                 start = 0
             elif labels[i].startswith('B'):
                 start = i
@@ -150,18 +135,30 @@ class LtpHelper(Component):
                 _start = get_start(i, tokens=tokens)
                 _end = _start + len(value)
                 ent = {
-                    'dim': dim,
+                    'label': self.dimension[dim],
                     'start': _start,
-                    'token_start': i,
                     'end': _end,
-                    'token_end': i + 1,
-                    'value': value
                 }
-                entites.append(ent)
+                spans.append(ent)
             else:  # O
                 pass
             i += 1
-        message.set("entities", entites, add_to_output=True)
+        message.set("spans", spans, add_to_output=True)
+
+    def extract_pronouns(self, message: Message, **kwargs: Any):
+        pronouns = []
+        tokens, poses = message.get("segments"), message.get("poses")
+        for i, (w, p) in enumerate(zip(tokens, poses)):
+            if p == 'r' and legalPronouns(w):
+                # 增加性别、单复数属性
+                start = get_start(i, tokens=tokens)
+                end = start + len(w)
+                pronouns.append({
+                    'start': start,
+                    'end': end,
+                    'label': "Pronoun"
+                })
+        message.set("spans", message.get("spans", []) + pronouns, add_to_output=True)
 
     def process(self, message: Message, **kwargs: Any):
         """Process an incoming message.
@@ -183,6 +180,9 @@ class LtpHelper(Component):
 
         # 抽取实体<序列标注+实体提取>
         self.extract_entities(message)
+
+        # 抽取代词
+        self.extract_pronouns(message)
 
     @classmethod
     def load(cls,
