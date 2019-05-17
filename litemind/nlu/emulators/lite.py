@@ -12,7 +12,7 @@ from rasa.nlu.emulators import NoEmulator
 
 class LiteEmulator(NoEmulator):
     def __init__(self) -> None:
-        self.name = None
+        self.name = "lite"
 
     def normalise_request_json(self, data: Dict[Text, Any]) -> Dict[Text, Any]:
 

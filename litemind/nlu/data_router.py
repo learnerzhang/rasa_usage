@@ -240,8 +240,14 @@ class DataRouter(object):
         elif mode.lower() == 'coref':
             from litemind.nlu.emulators.coref import CorefEmulator
             return CorefEmulator()
+        elif mode.lower() == 'entity':
+            from litemind.nlu.emulators.entity import EntityEmulator
+            return EntityEmulator()
+        elif mode.lower() == 'link':
+            from litemind.nlu.emulators.link import LinkEmulator
+            return LinkEmulator()
         else:
-            raise ValueError("unknown mode : {0}".format(mode))
+            raise ValueError("unknown emulator mode : {0}".format(mode))
 
     @staticmethod
     def _tf_in_pipeline(model_config: RasaNLUModelConfig) -> bool:

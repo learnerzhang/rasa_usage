@@ -68,15 +68,15 @@ class Strategy(Component):
               **kwargs: Any) -> None:
         pass
 
-    def start(self, ent, tokens):
-        for idx, token in enumerate(tokens):
-            if ent['start'] == token['start']:
+    def start(self, ent, segments):
+        for idx, segment in enumerate(segments):
+            if ent['start'] == segment['start']:
                 return idx
         return -1
 
-    def end(self, ent, tokens):
-        for idx, token in enumerate(tokens):
-            if ent['end'] == token['end']:
+    def end(self, ent, segments):
+        for idx, segment in enumerate(segments):
+            if ent['end'] == segment['end']:
                 return idx + 1
         return -1
 
@@ -109,20 +109,20 @@ class Strategy(Component):
                 ctx_pronoun = message.text[pronoun_end:pronoun_end + 1]
 
             # TODO
-            pronoun_arc = arcs[self.start(pronoun, tokens)]
-            pronoun_dep_words = segments[pronoun_arc.head - 1]
+            pronoun_arc = arcs[self.start(pronoun, segments)]
+            pronoun_dep_words = tokens[pronoun_arc.head - 1]
             arc_sims = []
             ctx_sims = []
             for ent in entities:
                 # context similarity
                 # TODO  next context of ent
-                ctx_ent = segments[self.end(ent, tokens)]
+                ctx_ent = tokens[self.end(ent, segments)]
                 ctx_sim = self.similarity(ctx_pronoun, ctx_ent)
                 ctx_sims.append(ctx_sim)
 
                 # TODO arcs similarity
-                arc = arcs[self.start(ent, tokens)]
-                ent_dep_words = segments[arc.head - 1]
+                arc = arcs[self.start(ent, segments)]
+                ent_dep_words = tokens[arc.head - 1]
                 arc_sim = self.similarity(pronoun_dep_words, ent_dep_words)
                 arc_sims.append(arc_sim)
 
@@ -163,11 +163,12 @@ class Strategy(Component):
             # step2 性别, 单复数现象
             if pronouns2gender(p_text) == '它':
                 # 非人类指代: 它
-                entities = [e for e in entities if e['label'] != 'PER']
+                entities = [e for e in entities if (e['label'] != 'person' and e['label'] != 'PER')]
             else:
                 # 人实体指代: 他/她
                 entities = [e for e in entities if
-                            e['label'] == 'PER' and (e['gender'] == pronouns2gender(p_text) or e['gender'] == '未')]
+                            (e['label'] == 'person' or e['label'] == 'PER') and (
+                                        e['gender'] == pronouns2gender(p_text) or e['gender'] == '未')]
 
             # step2 多个实体, 需要考虑就进原则, 支配词
             return self.multi_sample_class_entities(pronoun, entities, message)

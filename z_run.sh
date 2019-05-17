@@ -23,8 +23,5 @@ python -m train -c sample_configs/config_coref.yml -d data/rasa/movie.json -o mo
 # server
 python -m server --path models
 
-python -m server --path models  -e lite
-
-
 # test
 python -m unittest tests.call2graph.api_test

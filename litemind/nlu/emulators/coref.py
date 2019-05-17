@@ -12,7 +12,7 @@ from rasa.nlu.emulators import NoEmulator
 
 class CorefEmulator(NoEmulator):
     def __init__(self) -> None:
-        self.name = None
+        self.name = "coref"
 
     def normalise_request_json(self, data: Dict[Text, Any]) -> Dict[Text, Any]:
         return data
@@ -33,5 +33,4 @@ class CorefEmulator(NoEmulator):
 
         if 'entities' in data:
             del data['entities']
-
         return data

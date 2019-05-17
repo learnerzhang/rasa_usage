@@ -72,8 +72,11 @@
  
 ### 服务及演示
 
-> python -m server --path models  -e lite
+> python -m server --path models
 ### 指代消解
 > http://localhost:5000/parse?query=李世民病倒了，小明说他是累病的&project=coref
 
-### 
+### 属性连接
+#### 先训练
+> python -m train -c sample_configs/config_entity.yml -d data/entity/example -o models/ --project entity
+> 

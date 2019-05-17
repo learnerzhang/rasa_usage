@@ -10,6 +10,43 @@
 """
 from typing import Text, Any, List, Dict
 
+import os
+
+import requests
+from rasa.nlu.tokenizers import Token
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+
+class HttpSessionContext:
+    """ 根据requests session 创建 http请求的上下文环境, 用于with 或者手动创建连接, 关闭连接
+
+    """
+
+    def __init__(self):
+        self.session = requests.Session()
+
+    def __enter__(self):
+        self._set_adapter()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
+        return exc_type is not None
+
+    def _set_adapter(self):
+        a = requests.adapters.HTTPAdapter(max_retries=3)
+        b = requests.adapters.HTTPAdapter(max_retries=3)
+        self.session.mount('http://', a)
+        self.session.mount('https://', b)
+
+    def open(self):
+        self._set_adapter()
+        return self.session
+
+    def close(self):
+        self.session.close()
+
 
 def get_start(idx: int, tokens: List):
     """
@@ -24,6 +61,14 @@ def get_start(idx: int, tokens: List):
             break
         start += len(w)
     return start
+
+
+def duplicate(entities):
+    # type:(List[Dict[Text, Any]]) -> List[Dict[Text, Any]]
+    if entities:
+        d = {ent['entity'] + "_" + str(ent['start']) + "_" + str(ent['end']): ent for ent in entities}
+        return [val for val in d.values()]
+    return []
 
 
 def legalPronouns(pronouns: Text):
@@ -85,3 +130,17 @@ def span_output_format(spans: List[Dict]):
     for span in spans:
         if 'gender' in span:
             del span['gender']
+
+
+def tokenizer_extract(token):
+    """
+    rasa token 封装
+    :param token:
+    :return:
+    """
+    if isinstance(token, Token):
+        return token.text
+    return token
+
+
+
