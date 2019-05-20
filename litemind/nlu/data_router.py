@@ -246,6 +246,9 @@ class DataRouter(object):
         elif mode.lower() == 'link':
             from litemind.nlu.emulators.link import LinkEmulator
             return LinkEmulator()
+        elif mode.lower() == 'relation':
+            from litemind.nlu.emulators.relation import RelationEmulator
+            return RelationEmulator()
         else:
             raise ValueError("unknown emulator mode : {0}".format(mode))
 

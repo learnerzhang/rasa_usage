@@ -19,6 +19,8 @@ python -m train -c sample_configs/config_n2g.yml -d data/rasa/movie.json -o mode
 # coref
 python -m train -c sample_configs/config_coref.yml -d data/rasa/movie.json -o models/ --project coref
 
+# Relation
+python -m train -c sample_configs/config_relation.yml -d data/rasa/movie.json -o models/ --project relation --debug
 
 # server
 python -m server --path models

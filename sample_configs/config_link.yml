@@ -19,7 +19,7 @@ pipeline:
   - name: "litemind.att_link.attribute_link.AttributeLink"
     group_entity:
      person:
-       ['person', 'gender', 'height', 'time', 'city', 'age', 'address']
+       ['person', 'gender', 'height', 'time', 'city', 'age', 'address', 'birthday', 'birthplace', 'native_place']
      vehicle:
        ['color', 'car_brand', 'plate_number', 'time', 'city']
 

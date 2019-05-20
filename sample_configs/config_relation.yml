@@ -1,0 +1,16 @@
+language: "zh"
+
+pipeline:
+  - name: "litemind.nlu.utils.coref.CorefHelper"
+    url: "http://192.168.10.214:8967/coreference"
+  - name: "litemind.relation_extract.language.LanguageAnalysis"
+    ltp_path: "/Users/zhangzhen/data/ltp_data_v3.4.0"
+    segment_url: "http://d65.mlamp.cn:8789/segment"
+    recognize_url: "http://d65.mlamp.cn:8789/recognize"
+    dimensions: {'{NR ': 'person', '{NS ': 'address', '{NT ': 'company'}
+  - name: "litemind.relation_extract.relation.RelationExtractor"
+    rule_path: "data/relation_extract/template.txt"
+    relation_path: "data/relation_extract/relation_conf.txt"
+    relation_reg_path: "data/relation_extract/relation_reg.txt"
+
+adapter: 'relation'
