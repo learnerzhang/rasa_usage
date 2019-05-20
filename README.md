@@ -73,10 +73,24 @@
 ### 服务及演示
 
 > python -m server --path models
+### 实体抽取
+> http://localhost:5000/parse?query=李世民病倒了，小明说他是累病的&project=entity
+
 ### 指代消解
 > http://localhost:5000/parse?query=李世民病倒了，小明说他是累病的&project=coref
+
+### 属性链接
+> http://localhost:5000/parse?query=小明，男，身高180cm，上个月去北京站坐G22到新疆，与他同行的有30岁的小黑，他们开着一辆白色法拉利逃跑&project=link
+
+### 关系抽取
+> http://localhost:5000/parse?query=小明生病了，他的阿姨王兰在照顾他&project=relation
+
+
+
 
 ### 属性连接
 #### 先训练
 > python -m train -c sample_configs/config_entity.yml -d data/entity/example -o models/ --project entity
-> 
+> python -m train -c sample_configs/config_coref.yml -d data/entity/example -o models/ --project coref
+> python -m train -c sample_configs/config_link.yml -d data/entity/example -o models/ --project link
+> python -m train -c sample_configs/config_relation.yml -d data/entity/example -o models/ --project relation
