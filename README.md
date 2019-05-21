@@ -91,7 +91,10 @@
 
 ### 属性连接
 #### 先训练
-> python -m train -c sample_configs/config_entity.yml -d data/entity/example -o models/ --project entity
-> python -m train -c sample_configs/config_coref.yml -d data/entity/example -o models/ --project coref
-> python -m train -c sample_configs/config_link.yml -d data/entity/example -o models/ --project link
-> python -m train -c sample_configs/config_relation.yml -d data/entity/example -o models/ --project relation
+> python -m train -c sample_configs/config_entity_online.yml -d data/entity/example -o models/ --project entity
+
+> python -m train -c sample_configs/config_coref_online.yml -d data/entity/example -o models/ --project coref
+
+> python -m train -c sample_configs/config_link_online.yml -d data/entity/example -o models/ --project link
+
+> python -m train -c sample_configs/config_relation_online.yml -d data/entity/example -o models/ --project relation

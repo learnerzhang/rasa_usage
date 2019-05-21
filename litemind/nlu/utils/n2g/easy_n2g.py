@@ -62,14 +62,15 @@ class N2GHelper(Component):
                 tokens, label = line.split(',')
                 if len(tokens) == 1:
                     tokens = " " + tokens
-                self.dat.append((tokens, label))
 
-                if label == '男':
-                    self.m_word_count[tokens[0]] += 1
-                    self.m_word_count[tokens[1]] += 1
-                else:
-                    self.f_word_count[tokens[0]] += 1
-                    self.f_word_count[tokens[1]] += 1
+                if len(tokens) > 1:
+                    self.dat.append((tokens, label))
+                    if label == '男':
+                        self.m_word_count[tokens[0]] += 1
+                        self.m_word_count[tokens[1]] += 1
+                    else:
+                        self.f_word_count[tokens[0]] += 1
+                        self.f_word_count[tokens[1]] += 1
 
         # TEST
         acc_num = 0
