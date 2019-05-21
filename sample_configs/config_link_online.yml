@@ -1,0 +1,26 @@
+language: "zh"
+
+pipeline:
+  - name: "JiebaTokenizer"
+    dictionary_path: "data/jieba_userdict"
+  - name: "litemind.nlu.extractors.cws_entity_extractor.CWSEntityExtractor"
+    url: "http://d65.mlamp.cn:8789/recognize"
+    dimensions: {'{NR ': 'person', '{NS ': 'address', '{NT ': 'company'}
+  - name: "DucklingHTTPExtractor"
+    url: 'http://d65.mlamp.cn:8001/parse'
+    dimensions: ["identity", "time", "gender", "phone-number", "distance"]
+  - name: "litemind.nlu.extractors.customized_entity_extractor.CustomizedEntityExtractor"
+    yml_path: "./data/entity/yml/customize.yml"
+  - name: "EntitySynonymMapper"
+  - name: "litemind.nlu.utils.ltp.LtpHelper"
+    path: "/home/grafa/zhangzhen/data/ltp_data_v3.4.0"
+    lexicon: "lexicon"
+    dimension: {'Nh':'person', 'Ni':'org', 'Ns':'address'}
+  - name: "litemind.att_link.attribute_link.AttributeLink"
+    group_entity:
+     person:
+       ['person', 'gender', 'height', 'time', 'city', 'age', 'address', 'birthday', 'birthplace', 'native_place']
+     vehicle:
+       ['color', 'car_brand', 'plate_number', 'time', 'city']
+
+adapter: 'link'

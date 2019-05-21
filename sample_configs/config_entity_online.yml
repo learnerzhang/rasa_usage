@@ -1,0 +1,19 @@
+language: "zh"
+
+pipeline:
+  - name: "JiebaTokenizer"
+    dictionary_path: "data/jieba_userdict"
+  - name: "MitieNLP"
+    model: "/home/grafa/zhangzhen/data/mitie/total_word_feature_extractor.dat"
+  - name: "MitieEntityExtractor"
+  - name: "litemind.nlu.extractors.cws_entity_extractor.CWSEntityExtractor"
+    url: "http://d65.mlamp.cn:8789/recognize"
+    dimensions: {'{NR ': 'person', '{NS ': 'address', '{NT ': 'company'}
+  - name: "DucklingHTTPExtractor"
+    url: 'http://d65.mlamp.cn:8001/parse'
+    dimensions: ["identity", "time", "gender", "phone-number", "distance"]
+  - name: "litemind.nlu.extractors.customized_entity_extractor.CustomizedEntityExtractor"
+    yml_path: "./data/entity/yml/customize.yml"
+  - name: "EntitySynonymMapper"
+
+adapter: 'entity'
