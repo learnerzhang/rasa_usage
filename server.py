@@ -151,6 +151,146 @@ class RasaNLU(object):
         """Main Rasa route to check if the server is online"""
         return "hello from Rasa NLU: " + rasa.__version__
 
+    @app.route("/link", methods=['GET', 'POST', 'OPTIONS'])
+    @requires_auth
+    @check_cors
+    @inlineCallbacks
+    def link(self, request):
+        request.setHeader('Content-Type', 'application/json')
+        if request.method.decode('utf-8', 'strict') == 'GET':
+            request_params = decode_parameters(request)
+        else:
+            request_params = simplejson.loads(request.content.read().decode('utf-8', 'strict'))
+        request_params['project'] = 'link'
+        if 'text' in request_params:
+            request_params['q'] = request_params.pop('text')
+
+        if 'q' not in request_params:
+            request.setResponseCode(404)
+            dumped = json_to_string(
+                {"error": "Invalid parse parameter specified"})
+            returnValue(dumped)
+        else:
+            data = self.data_router.extract(request_params)
+            try:
+                request.setResponseCode(200)
+                response = yield (self.data_router.parse(data) if self._testing
+                                  else threads.deferToThread(
+                    self.data_router.parse, data))
+                returnValue(json_to_string(response))
+            except InvalidProjectError as e:
+                request.setResponseCode(404)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+            except Exception as e:
+                request.setResponseCode(500)
+                logger.exception(e)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+
+    @app.route("/entity", methods=['GET', 'POST', 'OPTIONS'])
+    @requires_auth
+    @check_cors
+    @inlineCallbacks
+    def entity(self, request):
+        request.setHeader('Content-Type', 'application/json')
+        if request.method.decode('utf-8', 'strict') == 'GET':
+            request_params = decode_parameters(request)
+        else:
+            request_params = simplejson.loads(request.content.read().decode('utf-8', 'strict'))
+        request_params['project'] = 'entity'
+        if 'text' in request_params:
+            request_params['q'] = request_params.pop('text')
+
+        if 'q' not in request_params:
+            request.setResponseCode(404)
+            dumped = json_to_string(
+                {"error": "Invalid parse parameter specified"})
+            returnValue(dumped)
+        else:
+            data = self.data_router.extract(request_params)
+            try:
+                request.setResponseCode(200)
+                response = yield (self.data_router.parse(data) if self._testing
+                                  else threads.deferToThread(
+                    self.data_router.parse, data))
+                returnValue(json_to_string(response))
+            except InvalidProjectError as e:
+                request.setResponseCode(404)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+            except Exception as e:
+                request.setResponseCode(500)
+                logger.exception(e)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+
+    @app.route("/coref", methods=['GET', 'POST', 'OPTIONS'])
+    @requires_auth
+    @check_cors
+    @inlineCallbacks
+    def coref(self, request):
+        request.setHeader('Content-Type', 'application/json')
+        if request.method.decode('utf-8', 'strict') == 'GET':
+            request_params = decode_parameters(request)
+        else:
+            request_params = simplejson.loads(request.content.read().decode('utf-8', 'strict'))
+        request_params['project'] = 'coref'
+        if 'text' in request_params:
+            request_params['q'] = request_params.pop('text')
+
+        if 'q' not in request_params:
+            request.setResponseCode(404)
+            dumped = json_to_string(
+                {"error": "Invalid parse parameter specified"})
+            returnValue(dumped)
+        else:
+            data = self.data_router.extract(request_params)
+            try:
+                request.setResponseCode(200)
+                response = yield (self.data_router.parse(data) if self._testing
+                                  else threads.deferToThread(
+                    self.data_router.parse, data))
+                returnValue(json_to_string(response))
+            except InvalidProjectError as e:
+                request.setResponseCode(404)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+            except Exception as e:
+                request.setResponseCode(500)
+                logger.exception(e)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+
+    @app.route("/relation", methods=['GET', 'POST', 'OPTIONS'])
+    @requires_auth
+    @check_cors
+    @inlineCallbacks
+    def relation(self, request):
+        request.setHeader('Content-Type', 'application/json')
+        if request.method.decode('utf-8', 'strict') == 'GET':
+            request_params = decode_parameters(request)
+        else:
+            request_params = simplejson.loads(request.content.read().decode('utf-8', 'strict'))
+        request_params['project'] = 'relation'
+        if 'text' in request_params:
+            request_params['q'] = request_params.pop('text')
+
+        if 'q' not in request_params:
+            request.setResponseCode(404)
+            dumped = json_to_string(
+                {"error": "Invalid parse parameter specified"})
+            returnValue(dumped)
+        else:
+            data = self.data_router.extract(request_params)
+            try:
+                request.setResponseCode(200)
+                response = yield (self.data_router.parse(data) if self._testing
+                                  else threads.deferToThread(
+                    self.data_router.parse, data))
+                returnValue(json_to_string(response))
+            except InvalidProjectError as e:
+                request.setResponseCode(404)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+            except Exception as e:
+                request.setResponseCode(500)
+                logger.exception(e)
+                returnValue(json_to_string({"error": "{}".format(e)}))
+
     @app.route("/parse", methods=['GET', 'POST', 'OPTIONS'])
     @requires_auth
     @check_cors

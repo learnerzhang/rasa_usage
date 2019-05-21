@@ -81,7 +81,7 @@ native_place:
 ## customize:height
 height:
   rules:
-    - (?<=身高[:：为是]?)@dim:distance,length:[2-6]
+    - (?<=身高[:：为在是]?)@dim:distance,length:[2-6]
 
 ## customize:car_brand
 car_brand:
