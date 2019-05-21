@@ -61,6 +61,7 @@
     pip install pip2pi         # 离线导包工具
     mkdir dependences          # 存放依赖包的地方
     pip2pi ./dependences --no-use-wheel -r requirements.txt  # 根据requirements.txt 导出依赖包
+    pip2pi ./dependences -r requirements.txt  # 根据requirements.txt 导出依赖包
 
 3. 将下载好的依赖项放在服务器，执行命令安装依赖，第一遍安装可能跳过某些依赖项，可以多次执行这个命令：
 

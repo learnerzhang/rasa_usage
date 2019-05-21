@@ -3,12 +3,13 @@ FROM python:3.6
 
 RUN rm -rf  /etc/localtime && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-COPY . /csv2graph
+COPY . /rasa_litemind
 
-WORKDIR /csv2graph
+WORKDIR /rasa_litemind
 
 CMD "sh" "-c" "echo nameserver 8.8.8.8 > /etc/resolv.conf"
 RUN ["pip", "install", "-r", "requirements.txt"]
+#RUN ["pip", "install", "--no-index", "--find-links=./dependences", "-r", "dev_requirements.txt"]
 #RUN echo `ls /core`
 
-ENTRYPOINT  ["python", "-m", "production_app"]
+ENTRYPOINT  ["python", "-m", "server"]
