@@ -72,7 +72,7 @@ class LtpHelper(Component):
             end = start + len(token)
             segments.append({'start': start, 'end': end})
             start = end
-        message.set("segments", segments, add_to_output=True)
+        message.set("segments", segments)
         message.set("tokens", tokens)
 
     def extract_poses(self, message: Message):
