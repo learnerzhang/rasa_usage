@@ -9,8 +9,7 @@ import typing
 from typing import Any, Dict, List, Optional, Text, Type
 
 from rasa.nlu import utils
-from rasa.nlu.classifiers.embedding_intent_classifier import \
-    EmbeddingIntentClassifier
+# from rasa.nlu.classifiers.embedding_intent_classifier import EmbeddingIntentClassifier
 from rasa.nlu.classifiers.keyword_intent_classifier import \
     KeywordIntentClassifier
 from rasa.nlu.classifiers.mitie_intent_classifier import MitieIntentClassifier
@@ -57,7 +56,7 @@ component_classes = [
     CountVectorsFeaturizer,
     # classifiers
     SklearnIntentClassifier, MitieIntentClassifier, KeywordIntentClassifier,
-    EmbeddingIntentClassifier
+    # EmbeddingIntentClassifier
 ]
 
 # Mapping from a components name to its class to allow name based lookup.
@@ -84,7 +83,7 @@ old_style_names = {
     "intent_classifier_sklearn": "SklearnIntentClassifier",
     "intent_classifier_mitie": "MitieIntentClassifier",
     "intent_classifier_keyword": "KeywordIntentClassifier",
-    "intent_classifier_tensorflow_embedding": "EmbeddingIntentClassifier"
+    # "intent_classifier_tensorflow_embedding": "EmbeddingIntentClassifier"
 }
 
 # To simplify usage, there are a couple of model templates, that already add
@@ -109,7 +108,7 @@ registered_pipeline_templates = {
         "CRFEntityExtractor",
         "EntitySynonymMapper",
         "CountVectorsFeaturizer",
-        "EmbeddingIntentClassifier"
+        # "EmbeddingIntentClassifier"
     ]
 }
 
