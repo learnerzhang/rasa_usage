@@ -2,27 +2,27 @@
 
 ### t1 指代消解 > coref
 - 组织方式
-    
-    
-    分词-> 词性标注-> 句法分析 
+
+
+    分词-> 词性标注-> 句法分析
     实体识别-> 人实体性别判断 -> 指代匹配策略
-  
+
 - 目前优化点
-    
-    
-   
+
+
+
     增加人名实体的识别精度, 人名-> 性别
 
 ### t2 话单入图 > call2graph
 - 组织方式
-    
-     
-     pass 
-  
-  
+
+
+     pass
+
+
 - 目前优化点
-    
-     
+
+
      pass
 
 ### 问题:
@@ -34,7 +34,7 @@
     3) 融合多种实体抽取工具;
 
 ###### 姓名属性不够精确
-    
+
     1) 性别判断难度比较大, 模型的准确率有限;
     2) 需要融入规则字典来解决常用名的性别识别;
 
@@ -49,14 +49,14 @@
 
 * 避免多余依赖的引入，最好是用virtualenv创建一个隔离环境
 
-    
+
     which  python3                              # 查找py3的安装路径
     /usr/local/bin/python3 -m virtualenv .env   # 创建虚拟py3环境
 
 
 * 获取当前项目的所有依赖，进入隔离环境，将项目的依赖项完整下载：
 
-    
+
     source .env/bin/activate   # 开启虚拟环境
     pip install pip2pi         # 离线导包工具
     mkdir dependences          # 存放依赖包的地方
@@ -65,26 +65,26 @@
 
 3. 将下载好的依赖项放在服务器，执行命令安装依赖，第一遍安装可能跳过某些依赖项，可以多次执行这个命令：
 
-    
+
     which  python3                              # 查找py3的安装路径
     /usr/local/bin/python3 -m virtualenv .env   # 创建虚拟py3环境
     pip install --no-index --find-links=./dependences -r requirements.txt  # 新服务器环境下导入依赖包
- 
- 
+
+
 ### 服务及演示
 
 > python -m server --path models
 ### 实体抽取
-> http://localhost:5000/parse?query=李世民病倒了，小明说他是累病的&project=entity
+> http://localhost:5007/entity?text=李世民病倒了，小明说他是累病的
 
 ### 指代消解
-> http://localhost:5000/parse?query=李世民病倒了，小明说他是累病的&project=coref
+> http://localhost:5007/coref?text=李世民病倒了，小明说他是累病的
 
 ### 属性链接
-> http://localhost:5000/parse?query=小明，男，身高180cm，上个月去北京站坐G22到新疆，与他同行的有30岁的小黑，他们开着一辆白色法拉利逃跑&project=link
+> http://localhost:5007/link?text=小明，男，身高180cm，上个月去北京站坐G22到新疆，与他同行的有30岁的小黑，他们开着一辆白色法拉利逃跑
 
 ### 关系抽取
-> http://localhost:5000/parse?query=小明生病了，他的阿姨王兰在照顾他&project=relation
+> http://localhost:5000/relation?text=小明生病了，他的阿姨王兰在照顾他
 
 
 
