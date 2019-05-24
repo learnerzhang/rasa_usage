@@ -50,9 +50,9 @@
 * 避免多余依赖的引入，最好是用virtualenv创建一个隔离环境
 
 
-    which  python3                              # 查找py3的安装路径
-    /usr/local/bin/python3 -m virtualenv .env   # 创建虚拟py3环境
-
+    which  python3                                    # 查找py3的安装路径
+    /usr/local/bin/python3 -m virtualenv .env         # 创建虚拟py3环境
+    virtualenv .env --python==/usr/local/bin/python3  # 创建虚拟py3环境
 
 * 获取当前项目的所有依赖，进入隔离环境，将项目的依赖项完整下载：
 

@@ -54,7 +54,8 @@ class LinkEmulator(NoEmulator):
             else:
                 eid = -1
             attributes.extend(
-                [{'eid': eid, 'attr_value': a['text'], 'attr_label': a['entity']} for att in atts for a in att])
+                [{'eid': eid, 'attr_value': a['text'], 'attr_label': a['entity'], 'start': a['start'], 'end': a['end']}
+                 for att in atts for a in att])
         data.update({'spans': spans})
         data.update({'attributes': attributes})
 
