@@ -80,8 +80,8 @@ class N2GHelper(Component):
         for ent in self.dat:
             name, label = ent
             w1, w2 = name[0], name[1]
-            p1 = self.m_word_count[w1] / (self.m_word_count[w1] + self.f_word_count[w1])
-            p2 = self.m_word_count[w2] / (self.m_word_count[w2] + self.f_word_count[w2])
+            p1 = self.m_word_count[w1] / (self.m_word_count[w1] + self.f_word_count[w1]+1)
+            p2 = self.m_word_count[w2] / (self.m_word_count[w2] + self.f_word_count[w2]+1)
             _data.append([p1, p2])
             _label.append(1 if label == '男' else 0)
             if w2 == ' ':
@@ -124,8 +124,8 @@ class N2GHelper(Component):
                 if per_len >= 1:
                     name = " " + per_text if per_len == 1 else per_text
                     w1, w2 = name[0], name[1]
-                    p1 = self.m_word_count[w1] / (self.m_word_count[w1] + self.f_word_count[w1])
-                    p2 = self.m_word_count[w2] / (self.m_word_count[w2] + self.f_word_count[w2])
+                    p1 = self.m_word_count[w1] / (self.m_word_count[w1] + self.f_word_count[w1]+1)
+                    p2 = self.m_word_count[w2] / (self.m_word_count[w2] + self.f_word_count[w2]+1)
                     if w1 == ' ':
                         p = p2
                     else:
