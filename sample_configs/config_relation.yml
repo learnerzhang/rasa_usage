@@ -2,7 +2,7 @@ language: "zh"
 
 pipeline:
   - name: "litemind.nlu.utils.coref.CorefHelper"
-    url: "http://192.168.10.214:8967/coreference"
+    url: "http://d65.mlamp.cn:8967/coreference"
   - name: "litemind.relation_extract.language.LanguageAnalysis"
     ltp_path: "/Users/zhangzhen/data/ltp_data_v3.4.0"
     segment_url: "http://d65.mlamp.cn:8789/segment"
